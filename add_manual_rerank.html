@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <link rel="icon" href="../docs/favicon.ico">
+
+        <title>Dashboard Template for Bootstrap</title>
+
+        <!-- Bootstrap core CSS -->
+        <link href="../docs/dist/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Custom styles for this template -->
+        <link href="../docs/examples/dashboard/dashboard.css" rel="stylesheet">
+
+        <script src="../docs/examples/dashboard/third/assets/jquery.min.js"></script>
+        <script src="../docs/examples/dashboard/third/assets/bootstrap/js/bootstrap.min.js"></script>
+        <script src="../docs/examples/dashboard/third/assets/bootstrap-table/src/bootstrap-table.js"></script>
+        <script src="../docs/examples/dashboard/third/assets/bootstrap-table/src/extensions/export/bootstrap-table-export.js"></script>
+        <script src="../docs/examples/dashboard/third/assets/bootstrap-table/src/extensions/editable/bootstrap-table-editable.js"></script>
+        <script src="../docs/examples/dashboard/third/ga.js"></script>
+        <script src="../docs/examples/dashboard/third/assets/jquery.min.js"></script>
+        <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+        <!--[if lt IE 9]>
+        <script src="../docs/assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+        <script src="../docs/assets/js/ie-emulation-modes-warning.js"></script>
+        <script src="../docs/examples/dashboard/js/jquery.1.9.1.min.js"></script>
+        <script src="../docs/examples/dashboard/third/assets/bootstrap/js/bootstrap.js"></script>
+        <script src="../docs/examples/dashboard/third/assets/bootstrap-table/src/extensions/editable/bootstrap-table-editable.js"></script>
+
+        <script src="../docs/examples/dashboard/js/myfunctions.js"></script>
+        <script src="./js//rawgit-bootstrap-editable.js"></script>
+        <script src="../docs/examples/dashboard/js/rawgit-jquery-base64.js"></script>
+        <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+        <!--[if lt IE 9]>
+        <script src="../docs/assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+        <script src="../docs/assets/js/ie-emulation-modes-warning.js"></script>
+        <script src="../docs/examples/dashboard/js/myfunctions.js"></script>
+        <script src="../docs/examples/dashboard/js/cookie.js"></script>
+
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        <script>
+    var sid = getSID();
+    var user_name=auth(sid);
+    if (undefined == user_name)
+    {
+        alert("can't get name . try once");
+        window.location.href="/ManualRerank";
+    }
+    function show(){
+        window.location.href='../docs/examples/dashboard/show_manual_rerank.html';
+    }
+    function add(){
+        window.location.href='./add_manual_rerank.html';
+    }
+    function addBatch(){
+        window.location.href='../docs/examples/dashboard/add_batch_manual_rerank.html';
+    }
+    
+        </script>
+    </head>
+
+    <body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Manual  Rerank</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a id="user_name" href="#">Dashboard</a></li>
+                <li><a  href="#">Help</a></li>
+            </ul>
+        </div>
+    </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-3 col-md-1 sidebar">
+                <ul class="nav nav-sidebar">
+                    <li ><a href="#" onclick="show()">Overview <span class="sr-only">(current)</span></a></li>
+                </ul>
+                <ul class="nav nav-sidebar">
+                    <li class="active" ><a href="#" onclick="add()">Add item</a></li>
+                </ul>
+                <ul class="nav nav-sidebar">
+                    <li ><a href="#" onclick="addBatch()">Add batch</a></li>
+                </ul>
+            </div>
+
+                <div class="col-sm-9 col-sm-offset-3 col-md-12 col-md-offset-1 main">
+                    <!-- article inputs -->
+                    <div class="table-responsive">
+                        <table   class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <td>AdSlotID("非空")</td>
+<td ><select id="slotID"><option selected = "select" value="50011">筛选</option><option value="50012">搜索</option></select></td>
+</tr>
+                                <tr>
+                                    <td>Query</td>
+                                    <td ><input id="query" type="text"></td>
+                                </tr>
+<tr>
+                                    <td>CityID</td>
+<td ><select id="cityID" type="text"></td>
+</tr>
+<tr>
+                                    <td>品类ID:cateID</td>
+<td ><select  id="cateID" name="query" type="text">  </td>
+</tr>
+<tr>
+                                    <td>区域ID:areaID</td>
+<td ><input  id="areaID" name="query" type="text">  </td>
+</tr>
+<tr>
+    <td>干预方式</td>
+    <td><select id="operation"><option selected = "select" value="1">屏蔽</option><!--option value="2">置顶</option--><option value="3">下单率阈值</option><option value="4">预测点击率最小值</option><option value="5">距离最大值</option></select></td>
+      </tr>
+<tr>
+                                    <td>干预值</td>
+<td ><input  id="operationExtention" name="query" type="text" value="" /></td>
+</tr>
+<tr>
+                                    <td>广告</td>
+          <td>  <select id="adKey"><option value="">全部</option><option value="advertiserId">advertiserId</option><option selected = "select" value="poiId">poiId</option><option value="targetId">targetId</option></select></td>
+</tr>
+<tr>
+                                    <td>广告ID</td>
+<td ><input  id="admValue" name="query" type="text"/></td>
+</tr>
+<tr>
+                                    <td>生效范围</td>
+<td ><select id="range">
+    <option value="1">预览</option>
+    <option value="2">上线</option>
+</select></td>
+</tr>
+<tr>
+                                    <td>有效天数</td>
+<!--td><input id="period"  type="text">  </td-->
+<td ><input class="span4" id="days" name="query" type="text" value="100">  </td>
+</tr>
+<tr>
+                                    <td>说明</td>
+<td ><input value="" class="span4" id="desc" name="query" type="text">  </td>
+</tr>
+<tr>
+    <td>操作</td>
+    <td><button class="btn btn-primary" type="button" onclick="addItem()">Add</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <!--
+                <div class="col-sm-9 col-sm-offset-3 col-md-11 col-md-offset-1 main">
+                    <div class="table-responsive">
+                        <table  id="add_table" class="table table-striped">
+                            <thead>
+                                <tr width = "500">
+                                    <th>Query</th>
+                                    <th>POI_ID</th>
+                                    <th>DEAL_ID</th>
+                                    <th>干预位置</th>
+                                    <th>干预方式</th>
+                                    <th>有效期</th>
+                                    <th>说明</th>
+                                    <th>添加</th>
+                                </tr>
+                            </thead>
+        </table>
+    </div>
+    -->
+
+
+
+</div>
+    <script>
+      m=document.getElementById("cateID")  //查找元素
+cateJson=getCateIDs();
+//var html="<option selected='select' value=''>全部品类</option>";
+var html="";
+$.each(cateJson, function(i, val){
+         if (val.platformID == 1 && val.parentID == 0)
+         {
+           if(val.name == "全部")
+            {
+                html += "<option selected = 'select' value=" + val.id  + ">" +val.name + "</option>"
+            }
+            else
+            {
+                html += "<option value=" + val.id  + ">" +val.name + "</option>"
+            }
+         }
+            //html += "<option value=" + val.id  + ">" +val.name + "</option>"
+});
+m.innerHTML = html
+    m=document.getElementById("cityID")  //查找元素
+var cityJson=getCityIDs();
+var html="<option selected='true' value='0'>全部</option>";
+$.each(cityJson.data, function(i, val){
+            html += "<option value=" + val.id  + ">" +val.name + "</option>"
+});
+m.innerHTML = html
+        x=document.getElementById("user_name")  //查找元素
+
+x.innerHTML=user_name
+
+        </script>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="../docs/dist/js/bootstrap.min.js"></script>
+<!-- Just to make our placeholder images work. Don't actually copy the next line! -->
+<script src="../docs/assets/js/vendor/holder.js"></script>
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="../docs/assets/js/ie10-viewport-bug-workaround.js"></script>
+  </body>
+</html>

@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=0.5, maximum-scale=0.5, minimum-scale=0.5, user-scalable=no">
+    <meta name="x5-fullscreen" content="true">
+    <meta name="full-screen" content="yes">
+
+    <title>Super Dictionary</title>
+    <link rel="stylesheet" href="lib/bootstrap-4.0.0-dist/css/bootstrap.min.css">
+    <style>
+        .logo {
+            width: 20%;
+            height: 200px;
+            margin: auto;
+        }
+
+        .name {
+            text-align: center;
+            font-size: 30px;
+            text-shadow: 3px 5px grey, 1px 1px #333;
+        }
+
+        .img {
+            width: 48%;
+            height: 53%;
+            margin: auto;
+            margin-top: 38px;
+        }
+
+        .img img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .search {
+            width: 50%;
+            height: 100px;
+            margin: auto;
+        }
+
+        .noExtension {
+            width: 60%;
+            height: 100px;
+            margin: auto;
+            font-size: 23px;
+        }
+
+        #search_value {
+            width: 80%;
+            height: 50px;
+            box-shadow: 3px 5px grey, 1px 1px #333;
+        }
+
+        .search button {
+            width: 18%;
+            height: 50px;
+            margin-left: 6px;
+            box-shadow: 3px 5px grey, 1px 1px #333;
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotateY(0deg);
+            }
+            25% {
+                transform: rotateY(180deg);
+            }
+            50% {
+                transform: rotateY(0deg);
+            }
+            75% {
+                transform: rotateY(180deg);
+            }
+            100% {
+                transform: rotateY(0deg);
+            }
+        }
+
+        .logo_rotate {
+            /*
+            animation: rotate 10s infinite;
+            animation-fill-mode: forwards;
+            animation-timing-function: linear;
+                */
+            /*  当动画结束时，让<div>元素保留上一个关键帧的样式值 */
+        }
+
+        .result_success {
+            width: 60%;
+            margin: auto;
+            font-size: 22px
+        }
+
+        .result_faile {
+            width: 60%;
+            margin: auto;
+            font-size: 22px
+        }
+
+        .add_banner {
+            width: 80%;
+            margin: auto;
+        }
+
+        .add_banner input {
+            width: 80%;
+            height: 50px;
+            box-shadow: 3px 5px grey, 1px 1px #333;
+        }
+
+        .add_banner button {
+            width: 18%;
+            height: 50px;
+            margin-left: 6px;
+            box-shadow: 3px 5px grey, 1px 1px #333;
+        }
+
+        #search_banner {
+            font-size: 50px;
+            border-bottom: 1px solid black;
+        }
+
+        p {
+            text-indent: 2em;
+            font-size: 30px;
+        }
+
+        .hide {
+            display: none;
+        }
+
+        .contenner {
+            background: url("img/ok.jpg");
+            height: 1500px;
+        }
+
+        .author {
+            text-align: right;
+        }
+
+        .author p {
+            display: inline-block;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+<canvas id="cav" width="800" height="800">
+</canvas>
+        <script src=lib/jquery-3.3.1.min.js></script>
+        <script src=lib/nebPay.js></script>
+        <script src=lib/bootstrap-4.0.0-dist/js/bootstrap.min.js></script>
+        <script src=lib/nebulas.js></script>
+        <script src="./js/myfunctions.js"></script>
+        <script src="./js/cookie.js"></script>
+        <script>
+
+         //  var jsondata=[{name:"技术部",num:95},{name:"研发部",num:3},{name:"市场部",num:50},{name:"攻关部",num:20},{name:"信息产业部",num:35},{name:"宣传部",num:50}];
+            var colors=["#cb4539","#fec655","#feff63","#2ba54e","#2b81b0","#053249","#053649"];
+            var sum = 0;
+            var lastsum=0;
+            function draw(jsondata) {
+                var canvas = document.getElementById("cav");
+                if(cav==null)return;
+                ctx = canvas.getContext("2d");
+                sumData(jsondata);
+                drawChart(jsondata);
+            }
+            //求数据总和
+            function sumData(jsondata){
+                for(var i=0;i<jsondata.length;i++){
+                    sum+=jsondata[i].num;
+                };
+            }
+            //下一个起始
+            function lastSum(i,jsondata){
+                lastsum=0;//重置为0
+                for (var j = 0; j < i; j++) {
+                    lastsum+=jsondata[j].num;
+                };
+            }
+            //画饼图
+            //半径
+            var radius=200;
+            function drawChart(jsondata){
+                for (var i = 0; i < jsondata.length;i++) {
+                    lastSum(i,jsondata);//上一个结束弧度就是下一个起始弧度
+                    var startAngle= (Math.PI*2)*(lastsum/sum);//起始弧度
+                    lastSum(i+1,jsondata);
+                    var endAngle=(Math.PI*2)*(lastsum/sum);//结束弧度
+                    ctx.save();
+                    ctx.fillStyle=this.colors[i];
+                    ctx.beginPath();
+                    ctx.moveTo(400,400);
+                    ctx.arc(400,400,radius,startAngle,endAngle,false);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.restore();
+                    drawText(startAngle,endAngle,jsondata[i].name,jsondata[i].num/sum);
+                };
+            }
+            //绘制文本和线段
+            function drawText(s,e,jn,jsm){
+                //文字的x，y坐标计算
+                var x = Math.cos((s+e)/2)*(radius+60)+400;
+                var y = Math.sin((s+e)/2)*(radius+60)+400;
+                ctx.fillStyle="blue";
+                ctx.fillText(jn,x,y);
+                ctx.fillStyle="red";
+                //百分比精确到小数后两位
+                ctx.fillText((parseInt(jsm*10000)/100)+"%",x,y+20);
+                //绘制由每个饼指向文字的线段
+                ctx.beginPath();
+                //各端点坐标由每块的起始弧度和结束弧度求平均后计算得出
+                ctx.moveTo(Math.cos((s+e)/2)*radius+400,Math.sin((s+e)/2)*radius+400);
+                ctx.lineTo( Math.cos((s+e)/2)*(radius+40)+400, Math.sin((s+e)/2)*(radius+40)+400);
+                ctx.closePath();
+                ctx.fillStyle="red";
+                ctx.stroke();
+            }
+            "use strict";
+
+
+            // $("#search_value").attr("disabled",true)
+            // $("#search").attr("disabled",true)
+            // //to check if the extension is installed
+            // //if the extension is installed, var "webExtensionWallet" will be injected in to web page
+            // if(typeof(webExtensionWallet) === "undefined"){
+            //     //alert ("Extension wallet is not installed, please install it first.")
+            //     $("#noExtension").removeClass("hide")
+            // }else{
+            //     $("#search_value").attr("disabled",false)
+            //     $("#search").attr("disabled",false)
+            // }
+
+
+            //here we use neb.js to call the "get" function to search from the Dictionary
+            var nebulas = require("nebulas"),
+                Account = nebulas.Account,
+                neb = new nebulas.Neb();
+            neb.setRequest(new nebulas.HttpRequest(net));
+
+            // 搜索功能: 查找Super-Dictionary 中有没有该词条
+
+            var voteTaskId = getUrlParam()["ID"]
+            console.log("ID:"+voteTaskId)
+
+            var candidateArray = [];
+            getVoteTask(voteTaskId)
+           // getStaticVote(voteTaskId)
+
+
+            function getVoteTask(voteTaskId) {
+                var from = onlyForQueryAddress;
+
+                var value = "0";
+                var nonce = "0"
+                var gas_price = "1000000"
+                var gas_limit = "2000000"
+                var callFunction = "getVoteTask";
+                var callArgs = "[\"" + voteTaskId + "\"]"; //in the form of ["args"]
+                var contract = {
+                    "function": callFunction,
+                    "args": callArgs
+                }
+
+                neb.api.call(from, dappAddress, value, nonce, gas_price, gas_limit, contract).then(function (resp) {
+                    getVoteTaskCallback(resp)
+                }).catch(function (err) {
+                    //cbSearch(err)
+                    console.log("error:" + err.message)
+                })
+
+            }
+
+
+            //return of search,
+            function getVoteTaskCallback(resp) {
+                var result = resp.result    ////resp is an object, resp.result is a JSON string
+                console.log("return of rpc call: " + JSON.stringify(result))
+                console.log("return of rpc call: " + result)
+
+                if (result === 'null') {
+                } else {
+                    //if result is not null, then it should be "return value" or "error message"
+                    try {
+                        console.log(result)
+                        var resulta = JSON.parse(result)
+                        var resultb = JSON.parse(resulta)
+                        //var resulta = jQuery.parseJSON(result)
+                        console.log(result)
+                        console.log(resultb)
+
+                        console.log(resultb["voteDescription"])
+                        console.log(resultb.voteDescription)
+
+
+//                        $("#voteDescription").val(resultb.voteDescription)
+                        var temp = decodeURI(resultb.candidate);
+                        console.log(temp)
+                         candidateArray = JSON.parse(temp)
+                        getStaticVote(voteTaskId)
+
+
+                    } catch (err) {
+                        console.log(err)
+                        //result is the error message
+                    }
+
+                    // $("#voteDescriptionTmp").val(result.get("voteDescription"))
+
+                }
+
+            }
+            //var html="<option selected='select' value=''>全部品类</option>";
+
+            function getStaticVote(voteTaskId) {
+                var from = onlyForQueryAddress;
+
+                var value = "0";
+                var nonce = "0"
+                var gas_price = "1000000"
+                var gas_limit = "2000000"
+                var callFunction = "staticVote";
+                var callArgs = "[\"" + voteTaskId + "\"]"; //in the form of ["args"]
+                var contract = {
+                    "function": callFunction,
+                    "args": callArgs
+                }
+
+                neb.api.call(from, dappAddress, value, nonce, gas_price, gas_limit, contract).then(function (resp) {
+                    cbSearch(resp)
+                }).catch(function (err) {
+                    //cbSearch(err)
+                    console.log("error:" + err.message)
+                })
+
+            }
+
+var StaticObject = function(name,num)
+{
+    this.name = name
+    this.num = num
+}
+            //return of search,
+            function cbSearch(resp) {
+                var result = resp.result    ////resp is an object, resp.result is a JSON string
+                console.log("return of rpc call: " + JSON.stringify(result))
+                console.log("return of rpc call: " + result)
+
+                if (result === 'null') {
+                    $(".add_banner").addClass("hide");
+                    $(".result_success").addClass("hide");
+
+                    $("#result_faile_add").text($("#search_value").val())
+
+                    $(".result_faile").removeClass("hide");
+                } else {
+                    //if result is not null, then it should be "return value" or "error message"
+                    try {
+                        console.log(result)
+                        var resulta = JSON.parse(result)
+                        var resultb = JSON.parse(resulta)
+                        //var resulta = jQuery.parseJSON(result)
+                        console.log(result)
+                        console.log(resultb)
+                        var votes = resultb.split("#");
+                        console.log(votes)
+                        var staticMap = new Map();
+                        for (var index in votes)
+                        {
+                            var vote = votes[index]
+                            if (vote.length > 0 ) {
+                                console.log("vote:"+vote)
+                                var temp = vote.split(":")
+                                var myKey = candidateArray[temp[1]]
+                                console.log(myKey)
+                                var count = staticMap.get(myKey)
+                                if (!count){
+                                    staticMap.set(myKey,1)
+                                }
+                                else
+                                {
+                                    staticMap.set(myKey,count+1)
+                                }
+                            }
+                        }
+                        console.log(staticMap)
+                        var staticArray = [];
+                        staticMap.forEach(function(value, key) {
+                            console.log(key + ' = ' + value);
+                            staticArray.push(new StaticObject(key,value))
+                        });
+
+                        for(var mykeya in staticMap.keys())
+                        {
+                            console.log(mykeya)
+                          // staticArray.push(new StaticObject(mykey,staticMap.get(mykey)))
+                        }
+                        console.log(staticArray)
+
+                        draw(staticArray)
+
+
+
+
+                    } catch (err) {
+                        console.log(err)
+                        //result is the error message
+                    }
+
+                    // $("#voteDescriptionTmp").val(result.get("voteDescription"))
+
+                }
+
+            }
+
+
+            var NebPay = require("nebpay");     //https://github.com/nebulasio/nebPay
+            var nebPay = new NebPay();
+            var serialNumber
+
+            $("#performVote").click(function () {
+
+               var value =  $("input[name='candidates']:checked").val()
+                console.log("choose:"+ value);
+
+                var to = dappAddress;
+                var value = "0";
+                var callFunction = "performVote"
+
+
+                var callArgs = "[\"" + voteTaskId + "\",\"" + value + "\"]"
+                console.log("perfomVote CalArgs:" + callArgs);
+
+
+                serialNumber = nebPay.call(to, value, callFunction, callArgs, {    //使用nebpay的call接口去调用合约,
+                    listener: cbPush        //设置listener, 处理交易返回信息
+                });
+                console.log("serialNumber:"+serialNumber);
+
+                intervalQuery = setInterval(function () {
+                    funcIntervalQuery();
+                }, 5000);
+
+            });
+
+            var intervalQuery
+
+            function funcIntervalQuery() {
+                nebPay.queryPayInfo(serialNumber)   //search transaction result from server (result upload to server by app)
+                    .then(function (resp) {
+                        console.log("tx result: " + resp)   //resp is a JSON string
+                        var respObject = JSON.parse(resp)
+                        if (respObject.code === 0) {
+                            alert("set succeed!")
+                            clearInterval(intervalQuery)
+                        }
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
+            }
+
+            function cbPush(resp) {
+                console.log("response of push: " + JSON.stringify(resp))
+            }
+            function sleep(numberMillis) {
+                var now = new Date();
+                var exitTime = now.getTime() + numberMillis;
+                while (true) {
+                    now = new Date();
+                    if (now.getTime() > exitTime)
+                        return;
+                }
+            }
+        </script>
+</body>
+
+</html>
