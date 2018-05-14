@@ -1,7 +1,15 @@
-var dappAddress = "n1vx37kN7KjJ9EzyzCmT1KzWqfGUhP9VHbc";
-var onlyForQueryAddress =  "n1Q5jYtzbJaFnaFn33SbKTpCvZULb49yaYZ"
-var testNet="https://testnet.nebulas.io";
-var net = testNet;
+
+var dappAddress = "n1h1aKVkKzf21rH851mLKK7ULzW4nn3P5Tb"
+var onlyForQueryAddress =  "n1KRGQWob1sN6UkKTokj9Y2UmJtqrST2abm"
+var net="https://mainnet.nebulas.io";
+
+
+
+
+
+//var dappAddress = "n1vx37kN7KjJ9EzyzCmT1KzWqfGUhP9VHbc";
+//var onlyForQueryAddress =  "n1Q5jYtzbJaFnaFn33SbKTpCvZULb49yaYZ"
+//var net="https://testnet.nebulas.io";
 
 function formatDate(date) {
   var hours = date.getHours();
@@ -41,6 +49,41 @@ function getSID()
              window.location.href='/ManualRerank';
         }
         return sid;
+}
+function getTrans(tx,net)
+{
+    var t = net + "v1/user/getTransactionReceip"
+    //session_tmp=urlParam["SID"];
+    //var date_ss = new Date().toGMTString();
+//    var signature = CryptoJS.HmacSHA1( ss,client_secret);
+    //  var auth_ss= "MWS" + " "+ client_id + ":"+signature
+
+    $.ajax({
+        url: t,
+        async: false,
+        cache: false,
+        type: 'POST',
+        data: {'hash':tx},
+
+        success: function (data) {
+            console.log(data)
+//             $.each(data, function (index, user) {
+//                 //      x=document.getElementById("user_name")  //查找元素
+//
+// //x.innerHTML=user.name
+//                 //   $("#user_name").innerHTML=user.name;
+//                 name=user.name;
+//                 // name_us=user.name;
+//                 //alert(user.name);
+//             });
+        },
+        error:function(data,status,er) {
+
+            alert("失败error: "+data.login+" status: "+status+" er:"+er);
+        }
+    });
+    return  name;
+
 }
 function auth(session_tmp)
 {

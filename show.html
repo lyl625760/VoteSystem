@@ -9,7 +9,7 @@
     <meta name="x5-fullscreen" content="true">
     <meta name="full-screen" content="yes">
 
-    <title>Super Dictionary</title>
+    <title>Votes</title>
     <link rel="stylesheet" href="lib/bootstrap-4.0.0-dist/css/bootstrap.min.css">
     <style>
         .logo {
@@ -171,7 +171,7 @@
                     <td><input id="voteDescription" type="text" size="35"></td>
                 </tr>
                 <tr>
-                    <td>投票选项</td>
+                    <td>您的投票</td>
                     <td id="candidatesTD"></td>
                 </tr>
                 <tr>
@@ -319,8 +319,17 @@
             });
 
             var intervalQuery
+            var tx= ""
 
             function funcIntervalQuery() {
+                if (tx.length > 0 ){
+                    getTrans(tx)
+                }
+                else
+                {
+                    $("#performVote").text("写入中。请等待")
+                }
+                /*
                 nebPay.queryPayInfo(serialNumber)   //search transaction result from server (result upload to server by app)
                     .then(function (resp) {
                         console.log("tx result: " + resp)   //resp is a JSON string
@@ -338,10 +347,65 @@
                     .catch(function (err) {
                         console.log(err);
                     });
+                    */
             }
 
             function cbPush(resp) {
                 console.log("response of push: " + JSON.stringify(resp))
+                tx=resp.txhash
+                console.log(tx)
+            }
+            function getTrans(tx) {
+                var tt = "/seagate/nebulas/getTxResult" ;
+                console.log("url:"+tt)
+                $.ajax({
+                    url: tt,
+                    async: false,
+                    cache: false,
+                    type: 'GET',
+                    data: {'tx':tx},
+//            dataType: "json",
+
+                    success: function (data) {
+
+                        console.log("tx:" + JSON.stringify(data))
+                        var tempa =  data.result
+                        var status = tempa.status
+                        console.log(status)
+                        if (status === 1) {
+                            var url="https://explorer.nebulas.io/#/tx/"+tx
+                            var voteUrl = "http://seagate/votesystem/show.html?ID="+voteTaskId
+                            var mystr="您的投票已写入区块链:"+url+"  。分享地址："+voteUrl+" 给朋友参与投票。"+"点击确定查看投票结果！"
+                            if(confirm(mystr))
+                            {
+                                clearInterval(intervalQuery)
+                                window.location.href='./staticVote.html?ID='+voteTaskId;
+                            }
+                            else
+                            {
+                                 //clearInterval(intervalQuery)
+                            }
+
+                        }
+                        else
+                        {
+                            $("#performVote").text("写入中。请等待")
+                        }
+//             $.each(data, function (index, user) {
+//                 //      x=document.getElementById("user_name")  //查找元素
+//
+// //x.innerHTML=user.name
+//                 //   $("#user_name").innerHTML=user.name;
+//                 name=user.name;
+//                 // name_us=user.name;
+//                 //alert(user.name);
+//             });
+                    },
+                    error: function (data, status, er) {
+
+                        alert("失败error: " + data.login + " status: " + status + " er:" + er);
+                    }
+                });
             }
         </script>
 </body>

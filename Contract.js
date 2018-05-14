@@ -62,7 +62,7 @@ VoteContract.prototype = {
         }
         return JSON.stringify(voteTask);
     },
-    getVoteId: function(voteDescription) {
+    getVoteId: function(voteDescriptionArgs) {
         // return JSON.stringify(this.size-1);
 
         var result = -1;
@@ -72,15 +72,15 @@ VoteContract.prototype = {
             if (!voteTask) {
                 throw new Error("Something Internal Error Happened :" + index);
             }
-            if (voteTask.voteDescription == voteDescription){
+            if (voteTask.voteDescription == voteDescriptionArgs){
                 result = index;
                 break;
             }
         }
         if(result == -1)
         {
-            var voteTask = this.voteTaskMap.get(this.size-1)
-            throw  new Error("error:"+voteTask.voteDescription + " query:"+voteDescription)
+            voteTask = this.voteTaskMap.get(this.size-1)
+            throw  new Error("error:"+voteTask.voteDescription + " query:"+voteDescriptionArgs)
         }
         return result;
 

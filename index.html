@@ -332,8 +332,70 @@
 
     var intervalQuery
 
+    var tx=""
+    function getTrans(tx) {
+//        var t = net + "/v1/user/getTransactionReceipt"
+        //session_tmp=urlParam["SID"];
+        //var date_ss = new Date().toGMTString();
+//    var signature = CryptoJS.HmacSHA1( ss,client_secret);
+        //  var auth_ss= "MWS" + " "+ client_id + ":"+signature
+        var tt = "/seagate/nebulas/getTxResult" ;
+        console.log("url:"+tt)
+        $.ajax({
+            url: tt,
+            async: false,
+            cache: false,
+            type: 'GET',
+            data: {'tx':tx},
+//            dataType: "json",
 
+            success: function (data) {
+
+                console.log("tx:" + JSON.stringify(data))
+                var tempa =  data.result
+                var status = tempa.status
+                console.log(status)
+                if (status === 1) {
+                   var   id = tempa.execute_result;
+                    console.log("id:"+id)
+                    console.log("id:"+parseInt(id))
+                    console.log("id:"+JSON.parse(id))
+                    var url = 'https://explorer.nebulas.io/#/tx/'+tx
+                    if(confirm("投票活动成功写入区块链："+url+"   点击确定现在去投票？"))
+                    {
+                        window.location.href='./show.html?ID='+JSON.parse(id);
+                        clearInterval(intervalQuery)
+                    }
+                    else
+                    {
+                        window.location.href='./show.html?ID='+JSON.parse(id);
+                        clearInterval(intervalQuery)
+
+                    }
+
+
+                }
+                else
+                {
+                    $("#createVote").text("创建中,请等待")
+                }
+            },
+            error: function (data, status, er) {
+
+                alert("失败error: " + data.login + " status: " + status + " er:" + er);
+            }
+        });
+    }
     function funcIntervalQuery() {
+        if (tx.length > 0 ){
+            getTrans(tx)
+        }
+        else
+        {
+            $("#createVote").text("创建中,请等待")
+        }
+
+        /*
         nebPay.queryPayInfo(serialNumber)   //search transaction result from server (result upload to server by app)
             .then(function (resp) {
                 console.log("getvoteId:"+ JSON.stringify(resp))
@@ -353,11 +415,16 @@
             .catch(function (err) {
                 console.log(err);
             });
+            */
     }
 
     function cbPush(resp) {
         console.log("response of push: " + JSON.stringify(resp))
+        tx=resp.txhash
+        console.log(tx)
+
     }
+    /*
     function getVoteId() {
         var from = onlyForQueryAddress;
 
@@ -379,8 +446,9 @@
             if (resp.result != "-1")
             {
                 console.log(resp.result);
-                alert("区块链成功写入您的投票，点击确定去投票？")
-                window.location.href='./show.html?ID='+resp.result;
+                var url="https://explorer.nebulas.io/#/tx/"+tx
+                alert("投票活动成功写入区块链："+url+"  现在去投票？")
+                window.location.href='./show.html?ID='+parseInt(resp.result);
 
             }
         }).catch(function (err) {
@@ -389,6 +457,7 @@
         })
 
     }
+    */
 
 
 
